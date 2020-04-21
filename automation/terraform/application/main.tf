@@ -73,3 +73,31 @@ resource "aws_elb" "application" {
     Name = "${var.stage}-elb"
   }
 }
+
+resource "aws_elasticache_cluster" "redis" {
+  cluster_id           = "${var.stage}-redis"
+  engine               = "redis"
+  node_type            = "cache.t2.micro"
+  num_cache_nodes      = 1
+  parameter_group_name = "default.redis3.2"
+  engine_version       = "3.2.10"
+  port                 = 6379
+  security_group_ids = [aws_security_group.redis.id]
+}
+
+resource "aws_security_group" "redis" {
+  name        = "${var.stage}-redis"
+  description = "Allow inbound traffic"
+
+  ingress {
+    description = "redis for web apps"
+    from_port   = 6379
+    to_port     = 6379
+    protocol    = "tcp"
+    security_groups = [aws_security_group.application.id]
+  }
+
+  tags = {
+    Name = "${var.stage}-application"
+  }
+}
