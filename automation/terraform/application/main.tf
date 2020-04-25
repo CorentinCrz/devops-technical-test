@@ -9,6 +9,8 @@ resource "aws_instance" "application" {
 
   tags = {
     Name = "${var.stage}-application"
+    component = "application"
+    stage = var.stage
   }
 }
 
