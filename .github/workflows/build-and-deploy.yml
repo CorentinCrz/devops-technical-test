@@ -47,8 +47,6 @@ jobs:
           echo "${SSH_KEY}" > .ssh/id_rsa
           chmod 600 .ssh/id_rsa
           ansible-galaxy install -r requirements.yml
-          head -10 /home/runner/work/devops-technical-test/devops-technical-test/automation/ansible/inventory/ec2.py
-          head -10 inventory/ec2.py
           ansible-playbook -i ./inventory/ec2.py ./staging.yml --user "${SSH_USER}" --key ./.ssh/id_rsa --tags application -e application_docker_tag=staging
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
