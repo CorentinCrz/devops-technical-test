@@ -2,7 +2,6 @@ name: Build and Deploy
 
 on:
   push:
-  pull_request:
     branches: [ master ]
 
 jobs:
@@ -10,7 +9,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: action/checkout@v2
+      - uses: action/checkout@master
       
       - name: Build the Docker container image
         run: docker build -t corentincrz/techtest:staging .
