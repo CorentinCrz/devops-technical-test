@@ -38,7 +38,7 @@ jobs:
       - name: Install python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install ansible==2.9.7
+          pip install ansible
           pip install boto
       
       - name: Run playbook
