@@ -16,8 +16,7 @@ jobs:
       
       - name: Push the image to DockerHub
         run: |
-          echo "${DOCKER_HUB_PASSWORD}" > my_password.txt
-          cat my_password.txt | docker login -u corentincrz --password-stdin
+          docker login -u corentincrz -p "${DOCKER_HUB_PASSWORD}"
           docker push corentincrz/techtest:staging
         env:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
@@ -37,26 +36,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install ansible==2.9.7 requests
       
-      - name: Move to ansible directory
-        run: cd automation/ansible
-      
       - name: Create ssh key file
         run: |
-          pwd
-          ls
+          cd automation/ansible
           mkdir .ssh
           echo "${SSH_KEY}" > .ssh/id_rsa
+          ls .ssh
           chmod 600 .ssh/id_rsa
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
       
       - name: Install ansible-galaxy dependencies
         run: |
-          pwd
+          cd automation/ansible
+          cat requirements.yml
           ansible-galaxy install -r requirements.yml
       
       - name: Run playbook
         run: |
+          cd automation/ansible
           pwd
           ls inventory
           ansible-playbook -i inventory/ec2.py staging.yml --user ubuntu --key .ssh/id_rsa --tags application -e application_docker_tag=staging
