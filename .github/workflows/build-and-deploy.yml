@@ -16,7 +16,8 @@ jobs:
       
       - name: Push the image to DockerHub
         run: |
-          docker login -u corentincrz -p "${DOCKER_HUB_PASSWORD}"
+          echo "${DOCKER_HUB_PASSWORD}" > my_password.txt
+          cat my_password.txt | docker login -u corentincrz --password-stdin
           docker push corentincrz/techtest:staging
         env:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
@@ -31,23 +32,35 @@ jobs:
         with:
           python-version: 3.8
       
-      - name: Install dependencies
+      - name: Install python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install ansible==2.9.7 requests
       
-      - name: Run playbook
+      - name: Move to ansible directory
+        run: cd automation/ansible
+      
+      - name: Create ssh key file
         run: |
-          ls
-          cd automation/ansible
+          pwd
           ls
           mkdir .ssh
           echo "${SSH_KEY}" > .ssh/id_rsa
           chmod 600 .ssh/id_rsa
-          ansible-galaxy install -r requirements.yml
-          ansible-playbook -i inventory/ec2.py staging.yml --user ubuntu --key .ssh/id_rsa --tags application -e application_docker_tag=staging
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
+      
+      - name: Install ansible-galaxy dependencies
+        run: |
+          pwd
+          ansible-galaxy install -r requirements.yml
+      
+      - name: Run playbook
+        run: |
+          pwd
+          ls inventory
+          ansible-playbook -i inventory/ec2.py staging.yml --user ubuntu --key .ssh/id_rsa --tags application -e application_docker_tag=staging
+        env:
           ANSIBLE_CFG: ./ansible.cfg
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
