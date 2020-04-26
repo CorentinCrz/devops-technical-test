@@ -55,4 +55,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 env:
-  APP_DOCKER_TAG: ${GITHUB_REF/refs\/tags\//}
+  APP_DOCKER_TAG: ${github.ref/refs\/tags\//}
