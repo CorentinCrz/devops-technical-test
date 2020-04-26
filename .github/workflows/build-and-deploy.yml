@@ -13,12 +13,12 @@ jobs:
       - uses: action/checkout@v2
       
       - name: Build the Docker container image
-        run: docker build -t corentincrz/techtest:latest .
+        run: docker build -t corentincrz/techtest:staging .
       
       - name: Push the image to DockerHub
         run: |
           docker login -u corentincrz -p "${DOCKER_HUB_PASSWORD}"
-          docker push corentincrz/techtest:latest
+          docker push corentincrz/techtest:staging
         env:
           DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
@@ -44,7 +44,7 @@ jobs:
           echo "${SSH_KEY}" > .ssh/id_rsa
           chmod 600 .ssh/id_rsa
           ansible-galaxy install -r requirements.yml
-          ansible-playbook -i inventory/ec2.py staging.yml --user ubuntu --key .ssh/id_rsa --tags application
+          ansible-playbook -i inventory/ec2.py staging.yml --user ubuntu --key .ssh/id_rsa --tags application -e application_docker_tag=staging
         env:
           SSH_KEY: ${{ secrets.SSH_KEY }}
           ANSIBLE_CFG: ./ansible.cfg
