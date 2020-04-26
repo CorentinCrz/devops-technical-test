@@ -9,7 +9,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - uses: action/checkout@master
+      - uses: actions/checkout@v2
       
       - name: Build the Docker container image
         run: docker build -t corentincrz/techtest:staging .
@@ -38,7 +38,9 @@ jobs:
       
       - name: Run playbook
         run: |
+          ls
           cd automation/ansible
+          ls
           mkdir .ssh
           echo "${SSH_KEY}" > .ssh/id_rsa
           chmod 600 .ssh/id_rsa
