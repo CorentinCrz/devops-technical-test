@@ -16,7 +16,7 @@ jobs:
       
       - name: Push the image to DockerHub
         run: |
-          echo ${GITHUB_REF}
+          echo ${GITHUB_SHA}
           docker login -u corentincrz -p "${DOCKER_HUB_PASSWORD}"
           docker push corentincrz/techtest:staging
         env:
